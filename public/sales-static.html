@@ -1,0 +1,115 @@
+<!-- public/sales-static.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verkoop Beheer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    h1 { font-size: 28px; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+    th { background-color: #f5f5f5; }
+    .btn { background-color: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    section { margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>Verkoop Beheer</h1>
+  
+  <section>
+    <h2>Consultancy Projecten</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Klant</th>
+          <th>Project</th>
+          <th>Tarief</th>
+          <th>Uren</th>
+          <th>Totaal</th>
+          <th>Einde</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Je Consultancy</td>
+          <td>Haarlemmermeer</td>
+          <td>€80</td>
+          <td>156</td>
+          <td>€12480</td>
+          <td>30/06/2025</td>
+        </tr>
+        <tr>
+          <td>Wijk Bij Duursteden</td>
+          <td>Audit Diensten</td>
+          <td>€90</td>
+          <td>156</td>
+          <td>€14040</td>
+          <td>30/09/2025</td>
+        </tr>
+        <tr>
+          <td>JE Conultancy</td>
+          <td>Gemeente Altena</td>
+          <td>€60</td>
+          <td>80</td>
+          <td>€4800</td>
+          <td>30/06/2025</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <h3>Nieuw Project Toevoegen</h3>
+    <form>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">
+        <input type="text" placeholder="Klant">
+        <input type="text" placeholder="Project Naam">
+        <input type="number" placeholder="Tarief">
+        <input type="number" placeholder="Uren">
+        <input type="date" placeholder="Start Datum">
+        <input type="date" placeholder="Eind Datum">
+      </div>
+      <button class="btn">Project Toevoegen</button>
+    </form>
+  </section>
+  
+  <section>
+    <h2>SaaS Abonnementen</h2>
+    <p>MRR: €479.80</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Klant</th>
+          <th>Gebruikers</th>
+          <th>Modules</th>
+          <th>Waarde</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FlowQi</td>
+          <td>20</td>
+          <td>1</td>
+          <td>€479.80</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <h3>Nieuwe Klant Toevoegen</h3>
+    <form>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">
+        <input type="text" placeholder="Klantnaam">
+        <input type="number" placeholder="Aantal gebruikers">
+        <input type="number" placeholder="Prijs per gebruiker" value="23.99" step="0.01">
+      </div>
+      <button class="btn">Klant Toevoegen</button>
+    </form>
+  </section>
+  
+  <section>
+    <h2>Liquiditeitsprognose</h2>
+    <p>Deze functionaliteit is momenteel in ontwikkeling. Binnenkort beschikbaar.</p>
+  </section>
+  
+  <p><a href="/dashboard" style="color: #2563eb; text-decoration: none;">Ga naar dashboard →</a></p>
+</body>
+</html>
