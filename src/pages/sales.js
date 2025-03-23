@@ -468,14 +468,14 @@ export default function SalesPage() {
     };
   };
 
-  if (!isClient) {
-    return <Layout><div className="loading">Loading sales page...</div></Layout>;
+  // Loading state zonder Layout
+  if (isLoading) {
+    return <div className="loading">Loading sales page...</div>;
   }
-
-  const yearlyRevenue = calculateYearlyRevenue();
-
+  
+  // Return zonder Layout
   return (
-    <Layout>
+    <div className="p-6">
       <div style={{
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         maxWidth: '1200px',
@@ -531,7 +531,7 @@ export default function SalesPage() {
               border: '1px solid #e0f2fe'
             }}>
               <div style={{ fontSize: '14px', color: '#0369a1', marginBottom: '8px' }}>Consultancy Omzet</div>
-              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{yearlyRevenue.consultancy.toLocaleString('nl-NL')}</div>
+              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{calculateYearlyRevenue().consultancy.toLocaleString('nl-NL')}</div>
             </div>
             
             <div style={{ 
@@ -541,7 +541,7 @@ export default function SalesPage() {
               border: '1px solid #d1fae5'
             }}>
               <div style={{ fontSize: '14px', color: '#047857', marginBottom: '8px' }}>SaaS Omzet</div>
-              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{yearlyRevenue.saas.toLocaleString('nl-NL')}</div>
+              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{calculateYearlyRevenue().saas.toLocaleString('nl-NL')}</div>
             </div>
             
             <div style={{ 
@@ -551,7 +551,7 @@ export default function SalesPage() {
               border: '1px solid #fde68a'
             }}>
               <div style={{ fontSize: '14px', color: '#92400e', marginBottom: '8px' }}>Totale Omzet</div>
-              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{yearlyRevenue.total.toLocaleString('nl-NL')}</div>
+              <div style={{ fontSize: '24px', fontWeight: '600' }}>€{calculateYearlyRevenue().total.toLocaleString('nl-NL')}</div>
             </div>
           </div>
         </div>
@@ -760,79 +760,73 @@ export default function SalesPage() {
             </div>
             
             {/* Consultancy Projecten Overzicht */}
-            {isLoading ? (
-              <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <p>Data laden...</p>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              border: '1px solid #f3f4f6',
+              overflow: 'hidden'
+            }}>
+              <div style={{ padding: '16px 24px', borderBottom: '1px solid #f3f4f6' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Actieve Projecten</h2>
               </div>
-            ) : (
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                border: '1px solid #f3f4f6',
-                overflow: 'hidden'
-              }}>
-                <div style={{ padding: '16px 24px', borderBottom: '1px solid #f3f4f6' }}>
-                  <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Actieve Projecten</h2>
+              
+              {consultancyProjects.length === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
+                  Geen consultancy projecten gevonden. Voeg een nieuw project toe om te beginnen.
                 </div>
-                
-                {consultancyProjects.length === 0 ? (
-                  <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
-                    Geen consultancy projecten gevonden. Voeg een nieuw project toe om te beginnen.
-                  </div>
-                ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Opdrachtgever</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Project</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Looptijd</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Uren/Mnd</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Tarief</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Mnd. Waarde</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Totale Waarde</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Acties</th>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Opdrachtgever</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Project</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Looptijd</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Uren/Mnd</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Tarief</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Mnd. Waarde</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Totale Waarde</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Acties</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {consultancyProjects.map(project => (
+                      <tr key={project.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>{project.client_name}</td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>{project.project_name}</td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                          {new Date(project.start_date).toLocaleDateString('nl-NL')} - {new Date(project.end_date).toLocaleDateString('nl-NL')}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right' }}>{project.hours_per_month}</td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right' }}>€{project.hourly_rate}</td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
+                          €{project.monthly_value.toLocaleString('nl-NL')}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
+                          €{project.total_value.toLocaleString('nl-NL')}
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <button 
+                            onClick={() => deleteConsultancyProject(project.id)}
+                            style={{ 
+                              padding: '4px 8px',
+                              backgroundColor: 'transparent',
+                              color: '#ef4444',
+                              border: '1px solid #ef4444',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Verwijderen
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {consultancyProjects.map(project => (
-                        <tr key={project.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>{project.client_name}</td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>{project.project_name}</td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>
-                            {new Date(project.start_date).toLocaleDateString('nl-NL')} - {new Date(project.end_date).toLocaleDateString('nl-NL')}
-                          </td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right' }}>{project.hours_per_month}</td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right' }}>€{project.hourly_rate}</td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
-                            €{project.monthly_value.toLocaleString('nl-NL')}
-                          </td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
-                            €{project.total_value.toLocaleString('nl-NL')}
-                          </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                            <button 
-                              onClick={() => deleteConsultancyProject(project.id)}
-                              style={{ 
-                                padding: '4px 8px',
-                                backgroundColor: 'transparent',
-                                color: '#ef4444',
-                                border: '1px solid #ef4444',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
-                              Verwijderen
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </>
         ) : (
           <>
@@ -1018,101 +1012,98 @@ export default function SalesPage() {
             </div>
             
             {/* SaaS Klanten Overzicht */}
-            {isLoading ? (
-              <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <p>Data laden...</p>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              border: '1px solid #f3f4f6',
+              overflow: 'hidden'
+            }}>
+              <div style={{ padding: '16px 24px', borderBottom: '1px solid #f3f4f6' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>SaaS Klanten</h2>
               </div>
-            ) : (
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                border: '1px solid #f3f4f6',
-                overflow: 'hidden'
-              }}>
-                <div style={{ padding: '16px 24px', borderBottom: '1px solid #f3f4f6' }}>
-                  <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>SaaS Klanten</h2>
+              
+              {saasClients.length === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
+                  Geen SaaS klanten gevonden. Voeg een nieuwe klant toe om te beginnen.
                 </div>
-                
-                {saasClients.length === 0 ? (
-                  <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
-                    Geen SaaS klanten gevonden. Voeg een nieuwe klant toe om te beginnen.
-                  </div>
-                ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Klant</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Startdatum</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Abonnementen</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Mnd. Waarde</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Status</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Acties</th>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Klant</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Startdatum</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '14px', fontWeight: '500' }}>Abonnementen</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '14px', fontWeight: '500' }}>Mnd. Waarde</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Status</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>Acties</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {saasClients.map(client => (
+                      <tr key={client.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>{client.client_name}</td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                          {new Date(client.start_date).toLocaleDateString('nl-NL')}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                          {client.subscriptions.map((sub, idx) => {
+                            const product = products.find(p => p.id === sub.product_id);
+                            return (
+                              <div key={idx} style={{ marginBottom: '4px' }}>
+                                <span style={{ fontWeight: '500' }}>{product ? product.name : sub.product_name}</span>
+                                <span style={{ color: '#6b7280', marginLeft: '4px' }}>
+                                  ({sub.quantity}x)
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
+                          €{client.monthly_value.toLocaleString('nl-NL')}
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <span style={{ 
+                            display: 'inline-block',
+                            padding: '2px 8px',
+                            backgroundColor: client.status === 'active' ? '#d1fae5' : '#fef3c7',
+                            color: client.status === 'active' ? '#047857' : '#92400e',
+                            borderRadius: '9999px',
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}>
+                            {client.status === 'active' ? 'Actief' : 'Gepland'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <button 
+                            onClick={() => deleteSaasClient(client.id)}
+                            style={{ 
+                              padding: '4px 8px',
+                              backgroundColor: 'transparent',
+                              color: '#ef4444',
+                              border: '1px solid #ef4444',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Verwijderen
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {saasClients.map(client => (
-                        <tr key={client.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>{client.client_name}</td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>
-                            {new Date(client.start_date).toLocaleDateString('nl-NL')}
-                          </td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px' }}>
-                            {client.subscriptions.map((sub, idx) => {
-                              const product = products.find(p => p.id === sub.product_id);
-                              return (
-                                <div key={idx} style={{ marginBottom: '4px' }}>
-                                  <span style={{ fontWeight: '500' }}>{product ? product.name : sub.product_name}</span>
-                                  <span style={{ color: '#6b7280', marginLeft: '4px' }}>
-                                    ({sub.quantity}x)
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </td>
-                          <td style={{ padding: '12px 16px', fontSize: '14px', textAlign: 'right', fontWeight: '500' }}>
-                            €{client.monthly_value.toLocaleString('nl-NL')}
-                          </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                            <span style={{ 
-                              display: 'inline-block',
-                              padding: '2px 8px',
-                              backgroundColor: client.status === 'active' ? '#d1fae5' : '#fef3c7',
-                              color: client.status === 'active' ? '#047857' : '#92400e',
-                              borderRadius: '9999px',
-                              fontSize: '12px',
-                              fontWeight: '500'
-                            }}>
-                              {client.status === 'active' ? 'Actief' : 'Gepland'}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                            <button 
-                              onClick={() => deleteSaasClient(client.id)}
-                              style={{ 
-                                padding: '4px 8px',
-                                backgroundColor: 'transparent',
-                                color: '#ef4444',
-                                border: '1px solid #ef4444',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
-                              Verwijderen
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </>
         )}
       </div>
-    </Layout>
+    </div>
   );
 }
+
+// Voeg getLayout functie toe voor consistente layout
+SalesPage.getLayout = (page) => Layout.getLayout(page);
                     

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Minimale reset */
 * {
     margin: 0;
@@ -14,4 +18,25 @@
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  /* Emoji grootte correctie */
+  .emoji {
+    font-size: 0.75rem !important;
+    transform: scale(0.75);
+    display: inline-block;
+  }
+  
+  /* Icoon grootte in menu items */
+  span > svg {
+    width: 16px !important;
+    height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+  }
+  
+  /* Fix voor emoji en SVG iconen */
+  svg {
+    width: 16px !important;
+    height: 16px !important;
   }

@@ -1,20 +1,17 @@
 // src/pages/_app.js
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { AuthProvider } from '../contexts/AuthContext';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
-  const [mounted, setMounted] = useState(false);
+  // Gebruik de getLayout functie van de component of gebruik een default layout
+  const getLayout = Component.getLayout || ((page) => page);
 
-  // Voorkom hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Als de app nog niet gemount is, geef dan niets terug
-  if (!mounted) {
-    return null;
-  }
-
-  return <Component {...pageProps} />;
+  return (
+    <AuthProvider>
+      {getLayout(<Component {...pageProps} />)}
+    </AuthProvider>
+  );
 }
 
 export default MyApp;

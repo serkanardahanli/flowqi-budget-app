@@ -24,7 +24,7 @@ const ExpensesPage = () => {
 
   // Volledige kostenstructuur exact zoals in Excel
   const expenseStructure = [
-    { code: '4000', description: 'Bruto Loon', isHeader: true, initialValue: -15000 },
+    { code: '4000', description: 'Bruto Loon', isHeader: true, initialValue: 0 },
     { code: '4300', description: 'Personeelsopleiding en -ontwikkeling', isHeader: true, hasChildren: true, initialValue: 0 },
     { code: '4310', description: 'Training software ontwikkelaars', parentCode: '4300' },
     { code: '4312', description: 'Training voor programmeertalen', parentCode: '4300' },
@@ -405,207 +405,169 @@ const ExpensesPage = () => {
     return { fontSize: '11px' };
   };
 
-  if (!isClient) {
-    return <Layout><div className="loading">Loading expenses...</div></Layout>;
+  if (!isClient || isLoading) {
+    return <div className="loading">Loading expenses...</div>;
   }
 
   return (
-    <Layout>
-      <div style={{ padding: '10px', fontSize: '11px' }}>
-        <h1 style={{ fontSize: '18px', marginBottom: '8px' }}>Kosten Beheer</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-8">Kosten Beheer</h1>
+      
+      <div className="flex items-center mb-10">
+        <label className="mr-5 text-sm">Jaar:</label>
+        <select 
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          className="p-2 border border-gray-300"
+        >
+          {[2023, 2024, 2025, 2026, 2027].map(year => (
+            <option key={year} value={year}>{year}</option>
+          ))}
+        </select>
         
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <label style={{ marginRight: '5px', fontSize: '11px' }}>Jaar:</label>
-          <select 
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            style={{ padding: '2px', marginRight: '10px', border: '1px solid #ccc', fontSize: '11px' }}
-          >
-            {[2023, 2024, 2025, 2026, 2027].map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
+        <button 
+          onClick={() => window.print()}
+          className="ml-4 px-4 py-2 flex items-center border border-gray-300 bg-gray-100"
+        >
+          <span className="text-sm mr-3">⇩</span>
+          Exporteren
+        </button>
+      </div>
+      
+      <div className="mb-15">
+        <h2 className="text-xl mb-4">Nieuwe Kosten Toevoegen</h2>
+        <p className="text-sm mb-8">Voeg nieuwe kostenposten toe per grootboekrekening en maand.</p>
+        
+        <div className="flex flex-wrap gap-10 items-end">
+          <div>
+            <label className="block mb-2 text-sm">Code</label>
+            <input
+              type="text"
+              value={newExpense.code}
+              onChange={(e) => setNewExpense({...newExpense, code: e.target.value})}
+              className="p-2 w-20 border border-gray-300"
+            />
+          </div>
           
-          <button 
-            onClick={() => window.print()}
-            style={{ 
-              padding: '2px 8px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              border: '1px solid #ccc', 
-              background: '#f9f9f9',
-              fontSize: '11px'
-            }}
+          <div>
+            <label className="block mb-2 text-sm">Omschrijving</label>
+            <input
+              type="text"
+              value={newExpense.description}
+              onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
+              className="p-2 w-40 border border-gray-300"
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-2 text-sm">Maand</label>
+            <select
+              value={newExpense.month}
+              onChange={(e) => setNewExpense({...newExpense, month: e.target.value})}
+              className="p-2 w-20 border border-gray-300"
+            >
+              {months.map((month, index) => (
+                <option key={index} value={index}>{month}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block mb-2 text-sm">Bedrag</label>
+            <div className="flex items-center">
+              <span className="mr-2 text-sm">€</span>
+              <input
+                type="number"
+                value={newExpense.amount}
+                onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
+                className="p-2 w-20 border border-gray-300"
+                step="0.01"
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={handleSaveExpense}
+            className="px-4 py-2 flex items-center border border-gray-300 bg-gray-100"
           >
-            <span style={{ fontSize: '14px', marginRight: '3px' }}>⇩</span>
-            Exporteren
+            <span className="text-sm mr-3">+</span>
+            Toevoegen
           </button>
         </div>
-        
-        <div style={{ marginBottom: '15px' }}>
-          <h2 style={{ fontSize: '14px', marginBottom: '4px' }}>Nieuwe Kosten Toevoegen</h2>
-          <p style={{ fontSize: '11px', marginBottom: '8px' }}>Voeg nieuwe kostenposten toe per grootboekrekening en maand.</p>
+      </div>
+      
+      <div>
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-xl">Kostenstructuur</h2>
           
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'flex-end' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>Code</label>
-              <input
-                type="text"
-                value={newExpense.code}
-                onChange={(e) => setNewExpense({...newExpense, code: e.target.value})}
-                style={{ padding: '2px', width: '80px', border: '1px solid #ccc', fontSize: '11px' }}
-              />
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>Omschrijving</label>
-              <input
-                type="text"
-                value={newExpense.description}
-                onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-                style={{ padding: '2px', width: '170px', border: '1px solid #ccc', fontSize: '11px' }}
-              />
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>Maand</label>
-              <select
-                value={newExpense.month}
-                onChange={(e) => setNewExpense({...newExpense, month: e.target.value})}
-                style={{ padding: '2px', width: '80px', border: '1px solid #ccc', fontSize: '11px' }}
-              >
-                {months.map((month, index) => (
-                  <option key={index} value={index}>{month}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>Bedrag</label>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ marginRight: '2px', fontSize: '11px' }}>€</span>
-                <input
-                  type="number"
-                  value={newExpense.amount}
-                  onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
-                  style={{ padding: '2px', width: '100px', border: '1px solid #ccc', fontSize: '11px' }}
-                  step="0.01"
-                />
-              </div>
-            </div>
-            
+          <div>
             <button
-              onClick={handleSaveExpense}
-              style={{ 
-                padding: '2px 8px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                border: '1px solid #ccc', 
-                background: '#f9f9f9',
-                fontSize: '11px',
-                height: '21px'
-              }}
+              onClick={() => toggleAllCategories(true)}
+              className="px-2 border border-gray-300 bg-gray-100"
             >
-              <span style={{ fontSize: '14px', marginRight: '3px' }}>+</span>
-              Toevoegen
+              Alles uitklappen
+            </button>
+            <button
+              onClick={() => toggleAllCategories(false)}
+              className="px-2 border border-gray-300 bg-gray-100"
+            >
+              Alles inklappen
             </button>
           </div>
         </div>
         
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-            <h2 style={{ fontSize: '14px' }}>Kostenstructuur</h2>
-            
-            <div>
-              <button
-                onClick={() => toggleAllCategories(true)}
-                style={{ 
-                  padding: '1px 4px', 
-                  border: '1px solid #ccc', 
-                  marginRight: '4px', 
-                  background: '#f9f9f9',
-                  fontSize: '10px'
-                }}
-              >
-                Alles uitklappen
-              </button>
-              <button
-                onClick={() => toggleAllCategories(false)}
-                style={{ 
-                  padding: '1px 4px', 
-                  border: '1px solid #ccc', 
-                  background: '#f9f9f9',
-                  fontSize: '10px'
-                }}
-              >
-                Alles inklappen
-              </button>
-            </div>
-          </div>
-          
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ddd' }}>
-              <thead>
-                <tr style={{ background: '#f2f2f2' }}>
-                  <th style={{ padding: '4px', textAlign: 'left', border: '1px solid #ddd', width: '60px', fontSize: '11px' }}>Code</th>
-                  <th style={{ padding: '4px', textAlign: 'left', border: '1px solid #ddd', width: '160px', fontSize: '11px' }}>Omschrijving</th>
-                  {months.map((month, i) => (
-                    <th key={i} style={{ padding: '4px', textAlign: 'center', border: '1px solid #ddd', width: '70px', fontSize: '11px' }}>{month}</th>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-4 text-left border border-gray-300 w-20 font-medium">Code</th>
+                <th className="p-4 text-left border border-gray-300 w-40 font-medium">Omschrijving</th>
+                {months.map((month, i) => (
+                  <th key={i} className="p-4 text-center border border-gray-300 w-20 font-medium">{month}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.filter(isVisible).map((expense) => (
+                <tr key={expense.code} className={getRowStyle(expense)}>
+                  <td className="p-2 border border-gray-300">
+                    <div className="flex items-center">
+                      {expense.hasChildren && (
+                        <button 
+                          onClick={() => toggleCategory(expense.code)}
+                          className="bg-none border-none cursor-pointer text-sm mr-3"
+                        >
+                          {expandedCategories[expense.code] ? '▼' : '►'}
+                        </button>
+                      )}
+                      <span className={getTextStyle(expense)}>{expense.code}</span>
+                    </div>
+                  </td>
+                  <td className="p-2 border border-gray-300">
+                    <span className={getTextStyle(expense)}>{expense.description}</span>
+                  </td>
+                  {expense.amounts.map((amount, monthIndex) => (
+                    <td key={monthIndex} className="p-1 border border-gray-300">
+                      <input
+                        type="text"
+                        value={amount === '#REF!' ? '#REF!' : amount}
+                        onChange={(e) => handleExpenseChange(expense.code, monthIndex, e.target.value)}
+                        className="w-full p-1 text-right border border-gray-300"
+                        {...getInputStyle(amount)}
+                        disabled={expense.isHeader || expense.isSubHeader}
+                      />
+                    </td>
                   ))}
                 </tr>
-              </thead>
-              <tbody>
-                {expenses.filter(isVisible).map((expense) => (
-                  <tr key={expense.code} style={getRowStyle(expense)}>
-                    <td style={{ padding: '2px', border: '1px solid #ddd' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', paddingLeft: `${getIndentLevel(expense) * 10}px` }}>
-                        {expense.hasChildren && (
-                          <button 
-                            onClick={() => toggleCategory(expense.code)}
-                            style={{ 
-                              background: 'none', 
-                              border: 'none', 
-                              cursor: 'pointer', 
-                              fontSize: '9px', 
-                              marginRight: '3px',
-                              padding: 0
-                            }}
-                          >
-                            {expandedCategories[expense.code] ? '▼' : '►'}
-                          </button>
-                        )}
-                        <span style={getTextStyle(expense)}>{expense.code}</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '2px', border: '1px solid #ddd' }}>
-                      <span style={getTextStyle(expense)}>{expense.description}</span>
-                    </td>
-                    {expense.amounts.map((amount, monthIndex) => (
-                      <td key={monthIndex} style={{ padding: '1px', border: '1px solid #ddd' }}>
-                        <input
-                          type="text"
-                          value={amount === '#REF!' ? '#REF!' : amount}
-                          onChange={(e) => handleExpenseChange(expense.code, monthIndex, e.target.value)}
-                          style={{ 
-                            width: '100%', 
-                            padding: '1px',
-                            textAlign: 'right', 
-                            border: '1px solid #eee',
-                            ...getInputStyle(amount)
-                          }}
-                          disabled={expense.isHeader || expense.isSubHeader}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
+
+ExpensesPage.getLayout = (page) => Layout.getLayout(page);
 
 export default ExpensesPage;

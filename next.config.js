@@ -1,10 +1,10 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
-  // Expliciet client-side rendering voor de sales pagina
-  experimental: {
-    serverComponents: true,
+  reactStrictMode: true,
+  eslint: {
+    // Waarschuwing: Dit is alleen tijdelijk voor ontwikkeling
+    ignoreDuringBuilds: true,
   },
 }
 

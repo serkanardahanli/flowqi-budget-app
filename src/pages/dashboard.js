@@ -365,280 +365,264 @@ export default function ExecutiveDashboard() {
     }
   };
   
-  if (!isClient) {
-    return <Layout><div className="loading">Loading executive dashboard...</div></Layout>;
+  if (isLoading) {
+    return <div className="loading">Loading executive dashboard...</div>;
   }
   
   return (
-    <Layout>
-      <div style={{
-        fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '24px',
-        color: '#333'
+    <div className="p-6">
+      <header style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '32px'
       }}>
-        <header style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px'
+        <div>
+          <h1 style={{ fontSize: '28px', fontWeight: '600', margin: '0 0 8px 0' }}>Financial Dashboard</h1>
+          <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>Overzicht van belangrijke financiële indicatoren</p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <select 
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '6px', 
+              border: '1px solid #ddd',
+              fontSize: '14px'
+            }}
+          >
+            {[2023, 2024, 2025].map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+          
+          <Link 
+            href="/expenses" 
+            style={{ 
+              textDecoration: 'none', 
+              color: '#2563eb', 
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Ga naar uitgavenbeheer →
+          </Link>
+        </div>
+      </header>
+      
+      {/* KPI Overzicht */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
+        {/* Omzet KPI card */}
+        <div style={{
+          padding: '24px',
+          borderRadius: '12px',
+          backgroundColor: 'white',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          border: '1px solid #f3f4f6'
         }}>
-          <div>
-            <h1 style={{ fontSize: '28px', fontWeight: '600', margin: '0 0 8px 0' }}>Financial Dashboard</h1>
-            <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>Overzicht van belangrijke financiële indicatoren</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: '14px', color: '#6b7280', margin: '0', fontWeight: '500' }}>Omzet</h3>
+            <button 
+              onClick={() => {
+                setInputRevenue(yearData.revenue.toString());
+                setShowRevenueInput(true);
+              }} 
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                fontSize: '12px',
+                color: '#2563eb'
+              }}
+            >
+              Bewerken
+            </button>
           </div>
           
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <select 
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-              style={{ 
-                padding: '8px 16px', 
-                borderRadius: '6px', 
-                border: '1px solid #ddd',
-                fontSize: '14px'
-              }}
-            >
-              {[2023, 2024, 2025].map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-            
-            <Link 
-              href="/expenses" 
-              style={{ 
-                textDecoration: 'none', 
-                color: '#2563eb', 
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              Ga naar uitgavenbeheer →
-            </Link>
-          </div>
-        </header>
-        
-        {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '50px 0' }}>
-            <p>Data laden...</p>
-          </div>
-        ) : (
-          <>
-            {/* KPI Overzicht */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '24px',
-              marginBottom: '32px'
-            }}>
-              {/* Omzet KPI card */}
-              <div style={{
-                padding: '24px',
-                borderRadius: '12px',
-                backgroundColor: 'white',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                border: '1px solid #f3f4f6'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '14px', color: '#6b7280', margin: '0', fontWeight: '500' }}>Omzet</h3>
-                  <button 
-                    onClick={() => {
-                      setInputRevenue(yearData.revenue.toString());
-                      setShowRevenueInput(true);
-                    }} 
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      cursor: 'pointer', 
-                      fontSize: '12px',
-                      color: '#2563eb'
-                    }}
-                  >
-                    Bewerken
-                  </button>
-                </div>
-                
-                {showRevenueInput ? (
-                  <div style={{ marginTop: '8px' }}>
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                      <input
-                        type="number"
-                        value={inputRevenue}
-                        onChange={(e) => setInputRevenue(e.target.value)}
-                        placeholder="Voer omzet in..."
-                        style={{ 
-                          padding: '4px 8px',
-                          border: '1px solid #ddd',
-                          borderRadius: '4px',
-                          flex: 1
-                        }}
-                      />
-                      <button 
-                        onClick={saveRevenue}
-                        style={{
-                          padding: '4px 8px',
-                          backgroundColor: '#2563eb',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Opslaan
-                      </button>
-                      <button 
-                        onClick={() => setShowRevenueInput(false)}
-                        style={{
-                          padding: '4px 8px',
-                          backgroundColor: '#f3f4f6',
-                          border: '1px solid #ddd',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ fontSize: '28px', fontWeight: '600', marginTop: '8px', marginBottom: '16px' }}>
-                      {`€${(yearData.revenue/1000).toFixed(0)}K`}
-                    </div>
-                    <div style={{ fontSize: '14px', color: trends.revenue.isUp ? '#10b981' : '#ef4444' }}>
-                      {trends.revenue.isUp ? '↑' : '↓'} {trends.revenue.percent.toFixed(1)}% t.o.v. vorig jaar
-                    </div>
-                  </>
-                )}
-              </div>
-              
-              <KpiCard 
-                title="Uitgaven" 
-                value={`€${(yearData.expenses/1000).toFixed(0)}K`}
-                trend={`${trends.expenses.percent.toFixed(1)}%`}
-                trendUp={trends.expenses.isUp}
-                trendIsGood={false}
-              />
-              <KpiCard 
-                title="Winst" 
-                value={`€${(yearData.profit/1000).toFixed(0)}K`}
-                trend={`${trends.profit.percent.toFixed(1)}%`}
-                trendUp={trends.profit.isUp}
-              />
-              <KpiCard 
-                title="Marge" 
-                value={`${yearData.margin.toFixed(1)}%`}
-                trend={`${trends.margin.percent.toFixed(1)}%`}
-                trendUp={trends.margin.isUp}
-              />
-            </div>
-            
-            {/* Kostenstructuur Overzicht */}
-            <div style={{
-              borderRadius: '12px',
-              border: '1px solid #eee',
-              padding: '24px',
-              marginBottom: '32px',
-              backgroundColor: 'white'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: '16px'
-              }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Kostenstructuur</h2>
-                <button 
-                  onClick={() => window.print()}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
+          {showRevenueInput ? (
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                <input
+                  type="number"
+                  value={inputRevenue}
+                  onChange={(e) => setInputRevenue(e.target.value)}
+                  placeholder="Voer omzet in..."
+                  style={{ 
+                    padding: '4px 8px',
                     border: '1px solid #ddd',
-                    background: 'white',
-                    fontSize: '14px',
+                    borderRadius: '4px',
+                    flex: 1
+                  }}
+                />
+                <button 
+                  onClick={saveRevenue}
+                  style={{
+                    padding: '4px 8px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
                     cursor: 'pointer'
                   }}
                 >
-                  Exporteren
+                  Opslaan
+                </button>
+                <button 
+                  onClick={() => setShowRevenueInput(false)}
+                  style={{
+                    padding: '4px 8px',
+                    backgroundColor: '#f3f4f6',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✕
                 </button>
               </div>
-              
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #eee' }}>
-                      <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Categorie</th>
-                      <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Totaal</th>
-                      <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>% van Uitgaven</th>
-                      <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>YoY Δ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categoryTotals.map(category => (
-                      <ExpenseRow 
-                        key={category.category}
-                        category={category.category} 
-                        amount={category.amount} 
-                        percent={category.percent} 
-                        change={category.change} 
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
-            
-            {/* Maandelijkse Uitgaven */}
-            <div style={{
-              borderRadius: '12px',
-              border: '1px solid #eee',
-              padding: '24px',
-              backgroundColor: 'white'
-            }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '600', marginTop: 0, marginBottom: '16px' }}>Maandelijkse Uitgaven</h2>
-              
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #eee' }}>
-                      <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Categorie</th>
-                      {['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'].map(month => (
-                        <th key={month} style={{ textAlign: 'right', padding: '12px 8px', fontSize: '14px', fontWeight: '500' }}>{month}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categoryTotals.map(category => (
-                      <MonthlyExpenseRow 
-                        key={category.category}
-                        category={category.category} 
-                        values={category.monthlyAmounts} 
-                      />
-                    ))}
-                    <tr style={{ borderTop: '2px solid #eee', fontWeight: 'bold' }}>
-                      <td style={{ padding: '12px 16px', fontSize: '14px' }}>Totaal</td>
-                      {Array(12).fill(0).map((_, i) => {
-                        const monthTotal = categoryTotals.reduce((sum, cat) => sum + cat.monthlyAmounts[i], 0);
-                        return (
-                          <td key={i} style={{ textAlign: 'right', padding: '12px 8px', fontSize: '14px' }}>
-                            {new Intl.NumberFormat('nl-NL', { 
-                              style: 'currency', 
-                              currency: 'EUR',
-                              maximumFractionDigits: 0
-                            }).format(monthTotal)}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  </tbody>
-                </table>
+          ) : (
+            <>
+              <div style={{ fontSize: '28px', fontWeight: '600', marginTop: '8px', marginBottom: '16px' }}>
+                {`€${(yearData.revenue/1000).toFixed(0)}K`}
               </div>
-            </div>
-          </>
-        )}
+              <div style={{ fontSize: '14px', color: trends.revenue.isUp ? '#10b981' : '#ef4444' }}>
+                {trends.revenue.isUp ? '↑' : '↓'} {trends.revenue.percent.toFixed(1)}% t.o.v. vorig jaar
+              </div>
+            </>
+          )}
+        </div>
+        
+        <KpiCard 
+          title="Uitgaven" 
+          value={`€${(yearData.expenses/1000).toFixed(0)}K`}
+          trend={`${trends.expenses.percent.toFixed(1)}%`}
+          trendUp={trends.expenses.isUp}
+          trendIsGood={false}
+        />
+        <KpiCard 
+          title="Winst" 
+          value={`€${(yearData.profit/1000).toFixed(0)}K`}
+          trend={`${trends.profit.percent.toFixed(1)}%`}
+          trendUp={trends.profit.isUp}
+        />
+        <KpiCard 
+          title="Marge" 
+          value={`${yearData.margin.toFixed(1)}%`}
+          trend={`${trends.margin.percent.toFixed(1)}%`}
+          trendUp={trends.margin.isUp}
+        />
       </div>
-    </Layout>
+      
+      {/* Kostenstructuur Overzicht */}
+      <div style={{
+        borderRadius: '12px',
+        border: '1px solid #eee',
+        padding: '24px',
+        marginBottom: '32px',
+        backgroundColor: 'white'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '16px'
+        }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Kostenstructuur</h2>
+          <button 
+            onClick={() => window.print()}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: '1px solid #ddd',
+              background: 'white',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            Exporteren
+          </button>
+        </div>
+        
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #eee' }}>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Categorie</th>
+                <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Totaal</th>
+                <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>% van Uitgaven</th>
+                <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>YoY Δ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categoryTotals.map(category => (
+                <ExpenseRow 
+                  key={category.category}
+                  category={category.category} 
+                  amount={category.amount} 
+                  percent={category.percent} 
+                  change={category.change} 
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      {/* Maandelijkse Uitgaven */}
+      <div style={{
+        borderRadius: '12px',
+        border: '1px solid #eee',
+        padding: '24px',
+        backgroundColor: 'white'
+      }}>
+        <h2 style={{ fontSize: '18px', fontWeight: '600', marginTop: 0, marginBottom: '16px' }}>Maandelijkse Uitgaven</h2>
+        
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #eee' }}>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: '14px', fontWeight: '500' }}>Categorie</th>
+                {['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'].map(month => (
+                  <th key={month} style={{ textAlign: 'right', padding: '12px 8px', fontSize: '14px', fontWeight: '500' }}>{month}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {categoryTotals.map(category => (
+                <MonthlyExpenseRow 
+                  key={category.category}
+                  category={category.category} 
+                  values={category.monthlyAmounts} 
+                />
+              ))}
+              <tr style={{ borderTop: '2px solid #eee', fontWeight: 'bold' }}>
+                <td style={{ padding: '12px 16px', fontSize: '14px' }}>Totaal</td>
+                {Array(12).fill(0).map((_, i) => {
+                  const monthTotal = categoryTotals.reduce((sum, cat) => sum + cat.monthlyAmounts[i], 0);
+                  return (
+                    <td key={i} style={{ textAlign: 'right', padding: '12px 8px', fontSize: '14px' }}>
+                      {new Intl.NumberFormat('nl-NL', { 
+                        style: 'currency', 
+                        currency: 'EUR',
+                        maximumFractionDigits: 0
+                      }).format(monthTotal)}
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -677,7 +661,7 @@ function ExpenseRow({ category, amount, percent, change }) {
       <td style={{ textAlign: 'right', padding: '12px 16px', fontSize: '14px' }}>{percent.toFixed(1)}%</td>
       <td style={{ 
         textAlign: 'right', 
-        padding: '12px 16px', 
+        padding: '12px 16px',
         fontSize: '14px',
         color: change >= 0 ? '#10b981' : '#ef4444'
       }}>
@@ -703,3 +687,6 @@ function MonthlyExpenseRow({ category, values }) {
     </tr>
   );
 }
+
+// Dit zorgt ervoor dat de Layout wordt toegepast op deze pagina
+ExecutiveDashboard.getLayout = (page) => Layout.getLayout(page);
